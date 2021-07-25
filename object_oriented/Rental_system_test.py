@@ -1,4 +1,4 @@
-from Rental_system import *
+from object_oriented.Rental_system import *
 
 rental_system = RentalSystem(bike_numbers=13, motorcycle_numbers=14)
 
