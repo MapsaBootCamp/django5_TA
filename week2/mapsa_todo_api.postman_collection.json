@@ -1,0 +1,79 @@
+{
+	"info": {
+		"_postman_id": "ae9fe195-891b-44af-bb60-56be0650262b",
+		"name": "mapsa_todo_api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "todo",
+			"item": [
+				{
+					"name": "list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": null
+					},
+					"response": [
+						{
+							"name": "successful_list",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8000/todo-base/list/",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"todo-base",
+										"list",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Sun, 25 Jul 2021 12:58:24 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.8.2"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "292"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"created_at\": \"2021-07-25T11:03:59.882Z\",\n        \"modified_at\": \"2021-07-25T11:03:59.883Z\",\n        \"due_at\": null,\n        \"name\": \"exercise1\",\n        \"cat_id\": 1\n    },\n    {\n        \"id\": 2,\n        \"created_at\": \"2021-07-25T12:46:55.197Z\",\n        \"modified_at\": \"2021-07-25T12:46:55.197Z\",\n        \"due_at\": null,\n        \"name\": \"exercise2\",\n        \"cat_id\": 1\n    }\n]"
+						}
+					]
+				}
+			]
+		}
+	]
+}
