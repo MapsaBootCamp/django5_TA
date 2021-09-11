@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import question_detail, QuestionDetail, QuestionList, \
-    answer_question, AnswerCount, CreateQuestion, UpdateQuestion
+    answer_question, AnswerCount, CreateQuestion, UpdateQuestion, AnswerCountAnnotation
 
 urlpatterns = [
     path('question-detail/<int:question_id>/',
@@ -18,5 +18,7 @@ urlpatterns = [
     path('create-question/', CreateQuestion.as_view(),
          name='create-question'),
     path('update-question/<int:question_id>/', UpdateQuestion.as_view(),
-         name='update-question')
+         name='update-question'),
+    path('answer-count-annotation/<int:question_id>/', AnswerCountAnnotation.as_view(),
+         name='answer-count-annotation'),
 ]

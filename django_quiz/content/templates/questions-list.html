@@ -9,11 +9,11 @@
 
 {% block content %}
    <div>
-        {{ mohammad }}
         <ul>
         {% for question in qs %}
+
             <li>
-                {{ question.title }}
+                 {{ question.cat.name }} | {{ question.title }}
             </li>
             {% for choice in question.choice_set.all %}
                 <li>

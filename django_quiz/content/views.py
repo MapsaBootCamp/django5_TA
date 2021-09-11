@@ -4,7 +4,7 @@ from .models import Question, Answer, Choice, Category
 from django.http.response import Http404
 
 from django.views.generic import DetailView, ListView, View
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.views.decorators.csrf import csrf_exempt
 from django.http.response import JsonResponse
 from django.utils.decorators import method_decorator
@@ -47,7 +47,8 @@ class QuestionList(ListView):
     #     return queryset
 
     def get_queryset(self):
-        queryset = Question.objects.all().order_by('-cat', 'id')
+        queryset = Question.objects.only('title').order_by('-cat', 'id').select_related('cat').prefetch_related(
+            'choice_set')
         cat_arg = self.request.GET.get('cat', None)
         difficulty_arg = self.request.GET.get('diff', None)
 
@@ -66,12 +67,12 @@ class QuestionList(ListView):
 
         return queryset
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(object_list=None, **kwargs)
-
-        context['mohammad'] = 'ashkan'
-        print(context)
-        return context
+    # def get_context_data(self, *, object_list=None, **kwargs):
+    #     context = super().get_context_data(object_list=None, **kwargs)
+    #
+    #     context['mohammad'] = 'ashkan'
+    #     print(context)
+    #     return context
 
 
 @csrf_exempt
@@ -112,7 +113,17 @@ class AnswerCount(DetailView):
     template_name = 'question_answer_counts.html'
     pk_url_kwarg = 'question_id'
     model = Question
+
+
+class AnswerCountAnnotation(DetailView):
+    template_name = 'question_answer_counts_annotation.html'
+    pk_url_kwarg = 'question_id'
     context_object_name = 'qs'
+    queryset = Question.objects.annotate(
+        answer_count_annt=Count('answer'),
+        correct_answer_count_annt=Count('answer', filter=Q(answer__choice__is_correct=True)),
+        wrong_answer_count_annt=Count('answer', filter=Q(answer__choice__is_correct=False)),
+        not_answered_count_annt=Count('answer', filter=Q(answer__choice=None)))
 
 
 @method_decorator(csrf_exempt, name='dispatch')
