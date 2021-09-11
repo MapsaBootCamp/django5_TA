@@ -1,6 +1,6 @@
 import json
-from django.shortcuts import render
-from .models import Question, Answer, Choice
+from django.shortcuts import render, redirect
+from .models import Question, Answer, Choice, Category
 from django.http.response import Http404
 
 from django.views.generic import DetailView, ListView, View
@@ -121,11 +121,70 @@ class CreateQuestion(View):
         body = self.request.body
         jsonify_body = json.loads(body)
         temp_dict = {}
+        cat_name = jsonify_body.get('cat')
+        cat, cat_created = Category.objects.get_or_create(name=cat_name)
         temp_dict['title'] = jsonify_body.get('title')
+        temp_dict['difficulty'] = jsonify_body.get('difficulty')
+        temp_dict['cat'] = cat
+        question, question_created = Question.objects.get_or_create(**temp_dict)
+        if not question_created:
+            return JsonResponse('this question already exist', safe=False)
 
-        question = Question.objects.create(**temp_dict)
+        choices_list = jsonify_body.get('choices_list')
+        correct_choice = jsonify_body.get('correct_choice')
+        choices_objs = []
+        for index, choice_title in enumerate(choices_list, start=1):
+            if correct_choice == index:
+                choices_objs.append(Choice(title=choice_title,
+                                           number=index,
+                                           question=question,
+                                           is_correct=True))
+            else:
+                choices_objs.append(Choice(title=choice_title,
+                                           number=index,
+                                           question=question,
+                                           is_correct=False))
 
-        choices = Choice.objects.bulk_create([Choice(title='title', question=question),
-                                              Choice(title='title', question=question)])
+        choices = Choice.objects.bulk_create(choices_objs)
+
+        return redirect('question-detail', question_id=question.id)
 
 
+@method_decorator(csrf_exempt, name='dispatch')
+class UpdateQuestion(View):
+    def patch(self, request, question_id):
+        try:
+            question = Question.objects.get(id=question_id)
+            body = self.request.body
+            jsonify_body = json.loads(body)
+            title = jsonify_body.get('title')
+            difficulty = jsonify_body.get('difficulty')
+            cat_name = jsonify_body.get('cat')
+            cat, cat_created = Category.objects.get_or_create(name=cat_name)
+            question.title = title
+            question.difficulty = difficulty
+            question.cat = cat
+
+            choices_list = jsonify_body.get('choices_list')
+            correct_choice = jsonify_body.get('correct_choice')
+            if choices_list and correct_choice:
+                question.choice_set.all().delete()
+                choices_objs = []
+                for index, choice_title in enumerate(choices_list, start=1):
+                    if correct_choice == index:
+                        choices_objs.append(Choice(title=choice_title,
+                                                   number=index,
+                                                   question=question,
+                                                   is_correct=True))
+                    else:
+                        choices_objs.append(Choice(title=choice_title,
+                                                   number=index,
+                                                   question=question,
+                                                   is_correct=False))
+
+                choices = Choice.objects.bulk_create(choices_objs)
+
+            question.save()
+            return redirect('question-detail', question_id=question.id)
+        except:
+            return JsonResponse('question with this id doesnt exist', safe=False)

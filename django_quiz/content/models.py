@@ -30,20 +30,20 @@ class Question(BaseModel):
     def __str__(self):
         return f'{self.cat} - {self.title[:20]}  - {self.difficulty}'
 
-    correct_answer = models.PositiveSmallIntegerField(default=0)
-    wrong_count = models.PositiveSmallIntegerField(default=0)
+    correct_answer_count = models.PositiveSmallIntegerField(default=0)
+    wrong_answer_count = models.PositiveSmallIntegerField(default=0)
     not_answered_count = models.PositiveSmallIntegerField(default=0)
 
     @property
-    def correct_count(self):
+    def correct_answer_count_property(self):
         return Answer.objects.filter(question=self, choice__is_correct=True).count()
 
     @property
-    def wrong_count(self):
+    def wrong_answer_count_property(self):
         return Answer.objects.filter(question=self, choice__is_correct=False).count()
 
     @property
-    def not_answered_count(self):
+    def not_answered_count_property(self):
         return Answer.objects.filter(question=self, choice=None).count()
 
 
