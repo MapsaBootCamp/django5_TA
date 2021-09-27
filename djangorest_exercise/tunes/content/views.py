@@ -9,8 +9,27 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from .filters import TrackFilter
 
+from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination, \
+    CursorPagination
+
+
+
+class CustomizeCursorPagination(CursorPagination):
+    page_size = 5
+
+class CustomizeLimitOffsetPagination(LimitOffsetPagination):
+    default_limit = 5
+
+
+
+class CustomizePagination(PageNumberPagination):
+    page_size = 2
+    page_query_param = 'page_size'
+
+
 # Create your views here.
 class TrackListView(ListCreateAPIView):
+    pagination_class = CustomizeCursorPagination
     queryset = Track.objects.all()
     serializer_class = TrackModelListSerializer
     filter_backends = [DjangoFilterBackend,
@@ -39,7 +58,6 @@ class TrackDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Track.objects.all().order_by('album', 'id')
     # serializer_class = TrackDetailSerializer
     serializer_class = TrackUpdateDetailSerializer
-
 
 
 class AlbumListView(ListCreateAPIView):
