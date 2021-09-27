@@ -5,10 +5,62 @@ from rest_framework.serializers import HyperlinkedModelSerializer, ModelSerializ
 from .models import Album, Track, Singer
 
 
+class SingerSerializer(ModelSerializer):
+    class Meta:
+        model = Singer
+        fields = ['first_name', 'last_name']
+
+
+class TrackUpdateDetailSerializer(ModelSerializer):
+    singers = SingerSerializer(many=True)
+
+    class Meta:
+        model = Track
+        fields = ['name', 'active', 'singers']
+
+    def update(self, instance, validated_data):
+        if validated_data.get('singers'):
+            singers_list = validated_data.pop('singers')
+            singer_object_list = []
+            for elem in singers_list:
+                singer, _ = Singer.objects.get_or_create(**elem)
+                print(_)
+                singer_object_list.append(singer)
+            instance.singers.set(singer_object_list)
+
+        instance.active = validated_data.get('active', instance.active)
+        instance.name = validated_data.get('name', instance.name)
+        instance.save()
+
+        return instance
+
+
+
+class TrackModelListSerializer(ModelSerializer):
+    singers = SingerSerializer(many=True)
+
+    class Meta:
+        model = Track
+        fields = ['name', 'active', 'singers']
+
+    def create(self, validated_data):
+        singers_list = validated_data.pop('singers')
+
+        singer_object_list = []
+        for elem in singers_list:
+            singer, _ = Singer.objects.get_or_create(**elem)
+            singer_object_list.append(singer)
+
+        track, _ = Track.objects.get_or_create(**validated_data)
+        track.singers.set(singer_object_list)
+
+        return track
+
+
 class TrackListSerializer(HyperlinkedModelSerializer):
     class Meta:
         model = Track
-        fields = ['name', 'active', 'url']
+        fields = ['name', 'active', 'url', 'singers']
 
 
 class TrackDetailSerializer(ModelSerializer):
@@ -48,6 +100,7 @@ class AlbumListSerializer(HyperlinkedModelSerializer):
 class AlbumDetailSerializer(ModelSerializer):
     track_set = TrackSerializer(many=True, read_only=True)
     field1 = SerializerMethodField(method_name='compute_field1')
+
     # tracks = StringRelatedField(source='track_set', many=True, read_only=True)
     # tracks = PrimaryKeyRelatedField(source='track_set', many=True, read_only=True)
     # tracks2 = HyperlinkedRelatedField(source='track_set', many=True, read_only=True,
