@@ -14,11 +14,20 @@ from rest_framework.pagination import PageNumberPagination, LimitOffsetPaginatio
     CursorPagination
 
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView, ListCreateAPIView, ListAPIView, CreateAPIView, DestroyAPIView, RetrieveUpdateDestroyAPIView, RetrieveDestroyAPIView
+from rest_framework.viewsets import ReadOnlyModelViewSet
 
 
-class TrackViewSet(ModelViewSet):
+class TrackViewSet(ReadOnlyModelViewSet):
     queryset = Track.objects.all().order_by('album', 'id')
-    serializer_class = TrackViewsetSerializer
+    # serializer_class = TrackViewsetSerializer
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return TrackListSerializer
+        elif self.action == 'retrieve':
+            return TrackDetailSerializer
 
 
 class CustomizeCursorPagination(CursorPagination):

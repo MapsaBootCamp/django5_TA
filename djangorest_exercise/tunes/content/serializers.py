@@ -60,13 +60,14 @@ class TrackModelListSerializer(ModelSerializer):
 class TrackListSerializer(HyperlinkedModelSerializer):
     class Meta:
         model = Track
-        fields = ['name', 'active', 'url', 'singers']
+        fields = ['name', 'url']
 
 
 class TrackDetailSerializer(ModelSerializer):
     class Meta:
         model = Track
         fields = '__all__'
+
 
 
 class TrackViewsetSerializer(ModelSerializer):
