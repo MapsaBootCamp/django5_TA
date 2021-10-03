@@ -69,6 +69,12 @@ class TrackDetailSerializer(ModelSerializer):
         fields = '__all__'
 
 
+class TrackViewsetSerializer(ModelSerializer):
+    class Meta:
+        model = Track
+        fields = ['name', 'album', 'active', 'singers']
+
+
 class TrackSerializer(ModelSerializer):
     class Meta:
         model = Track

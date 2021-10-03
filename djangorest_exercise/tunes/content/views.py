@@ -4,7 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Track, Album
 from .serializers import AlbumListSerializer, AlbumDetailSerializer, \
-    TrackListSerializer, TrackDetailSerializer, TrackModelListSerializer, TrackUpdateDetailSerializer
+    TrackListSerializer, TrackDetailSerializer, TrackModelListSerializer, \
+TrackUpdateDetailSerializer, TrackViewsetSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from .filters import TrackFilter
@@ -12,14 +13,20 @@ from .filters import TrackFilter
 from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination, \
     CursorPagination
 
+from rest_framework.viewsets import ModelViewSet
+
+
+class TrackViewSet(ModelViewSet):
+    queryset = Track.objects.all().order_by('album', 'id')
+    serializer_class = TrackViewsetSerializer
 
 
 class CustomizeCursorPagination(CursorPagination):
     page_size = 5
 
+
 class CustomizeLimitOffsetPagination(LimitOffsetPagination):
     default_limit = 5
-
 
 
 class CustomizePagination(PageNumberPagination):
