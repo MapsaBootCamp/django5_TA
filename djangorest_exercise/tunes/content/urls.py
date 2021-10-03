@@ -1,6 +1,6 @@
 from django.urls import path, include
 from .views import AlbumListView, AlbumDetailView, \
-    TrackListView, TrackDetailView, TrackViewSet
+    TrackListView, TrackDetailView, TrackViewSet, AlbumViewSet
 from rest_framework.routers import DefaultRouter, SimpleRouter
 
 # default_router = DefaultRouter()
@@ -8,7 +8,7 @@ from rest_framework.routers import DefaultRouter, SimpleRouter
 
 simple_router = SimpleRouter()
 simple_router.register('track', TrackViewSet)
-
+simple_router.register('album', AlbumViewSet)
 
 urlpatterns = [
     path('album-list/', AlbumListView.as_view(), name='album-list'),

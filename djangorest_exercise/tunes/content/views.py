@@ -19,6 +19,11 @@ from rest_framework.generics import GenericAPIView, ListCreateAPIView, ListAPIVi
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 
+class AlbumViewSet(ReadOnlyModelViewSet):
+    queryset = Album.objects.all().order_by('id')
+    serializer_class = AlbumListSerializer
+
+
 class TrackViewSet(ReadOnlyModelViewSet):
     queryset = Track.objects.all().order_by('album', 'id')
     # serializer_class = TrackViewsetSerializer
